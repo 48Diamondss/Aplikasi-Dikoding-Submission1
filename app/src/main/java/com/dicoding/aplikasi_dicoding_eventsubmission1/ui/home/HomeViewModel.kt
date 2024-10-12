@@ -1,5 +1,6 @@
 package com.dicoding.aplikasi_dicoding_eventsubmission1.ui.home
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -27,12 +28,23 @@ class HomeViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     response.body()?.listEvents?.take(5)?.let { // Ambil maksimal 5 event
                         _upcomingEvents.postValue(it)
+                    } ?: run {
+                        // Jika listEvents adalah null
+                        Log.e("FetchEvents", "ListEvents is null")
+                        _upcomingEvents.postValue(emptyList())
                     }
+                } else {
+                    // Tangani kesalahan respons yang tidak berhasil
+                    Log.e("FetchEvents", "Error: ${response.errorBody()?.string()}")
+                    _upcomingEvents.postValue(emptyList())
                 }
             }
 
             override fun onFailure(call: Call<UpcomingResponse>, t: Throwable) {
-                // Tangani kesalahan di sini
+
+                Log.e("FetchEvents", "Network error: ${t.message}")
+                _upcomingEvents.postValue(emptyList())
+
             }
         })
 
@@ -42,12 +54,22 @@ class HomeViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     response.body()?.listEvents?.take(5)?.let { // Ambil maksimal 5 event
                         _finishedEvents.postValue(it)
+                    } ?: run {
+                        // Jika listEvents adalah null
+                        Log.e("FetchEvents", "ListEvents is null")
+                        _finishedEvents.postValue(emptyList())
                     }
+                } else {
+                    // Tangani kesalahan respons yang tidak berhasil
+                    Log.e("FetchEvents", "Error: ${response.errorBody()?.string()}")
+                    _finishedEvents.postValue(emptyList())
                 }
             }
 
             override fun onFailure(call: Call<UpcomingResponse>, t: Throwable) {
-                // Tangani kesalahan di sini
+                Log.e("FetchEvents", "Network error: ${t.message}")
+
+                _finishedEvents.postValue(emptyList())
             }
         })
     }

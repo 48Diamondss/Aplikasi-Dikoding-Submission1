@@ -15,29 +15,28 @@ data class UpcomingResponse(
 
 data class ListEventsItem(
 	@field:SerializedName("imageLogo")
-	val imageLogo: String? = null,  // Tetap nullable jika bisa tidak ada
+	val imageLogo: String? = null,
 
 	@field:SerializedName("mediaCover")
-	val mediaCover: String? = null,  // Tetap nullable jika bisa tidak ada
+	val mediaCover: String? = null,
 
 	@field:SerializedName("name")
-	val name: String? = null,  // Tetap nullable jika bisa tidak ada
+	val name: String? = null,
 
 	@field:SerializedName("ownerName")
-	val ownerName: String? = null,  // Tetap nullable jika bisa tidak ada
+	val ownerName: String? = null,
 
 	@field:SerializedName("beginTime")
-	val beginTime: String? = null,  // Tetap nullable jika bisa tidak ada
+	val beginTime: String? = null,
 
 	@field:SerializedName("quota")
-	val quota: Int? = null,  // Tetap nullable jika bisa tidak ada
+	val quota: Int? = null,
 
 	@field:SerializedName("registrants")
-	val registrants: Int? = null,  // Tetap nullable jika bisa tidak ada
+	val registrants: Int? = null,
 
 	@field:SerializedName("description")
-	val description: String? = null,  // Tetap nullable jika bisa tidak ada
-
+	val description: String? = null,
 	@field:SerializedName("link")
-	val link: String? = null  // Tetap nullable jika bisa tidak ada
+	val link: String? = null
 )
