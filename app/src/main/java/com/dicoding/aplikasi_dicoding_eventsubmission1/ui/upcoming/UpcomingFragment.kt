@@ -23,7 +23,7 @@ class UpcomingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val upcomingViewModel =
-            ViewModelProvider(this).get(UpcomingViewModel::class.java)
+            ViewModelProvider(this)[UpcomingViewModel::class.java]
 
         _binding = FragmentUpcomingBinding.inflate(inflater, container, false)
         val root: View = binding.root
