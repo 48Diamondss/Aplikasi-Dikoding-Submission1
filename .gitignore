@@ -1,20 +1,3 @@
-<<<<<<< HEAD
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
-local.properties
-=======
 # Gradle files
 .gradle/
 build/
@@ -48,4 +31,6 @@ google-services.json
 
 # Android Profiling
 *.hprof
->>>>>>> 5c44a04e9d2a6c2f450d71f994ebc6a68ed8e98d
+
+# MacOS specific file
+.DS_Store
