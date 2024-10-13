@@ -1,5 +1,6 @@
 package com.dicoding.aplikasi_dicoding_eventsubmission1.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import com.dicoding.aplikasi_dicoding_eventsubmission1.MainViewModel
 import com.dicoding.aplikasi_dicoding_eventsubmission1.data.adapter.Adapter
 import com.dicoding.aplikasi_dicoding_eventsubmission1.data.adapter.CarouselAdapter
 import com.dicoding.aplikasi_dicoding_eventsubmission1.databinding.FragmentHomeBinding
+import com.dicoding.aplikasi_dicoding_eventsubmission1.ui.detail.DetailActivity
 
 class HomeFragment : Fragment() {
 
@@ -59,22 +61,32 @@ class HomeFragment : Fragment() {
         // Inisialisasi RecyclerView untuk finished events
         binding.recyclerViewVertical.layoutManager = LinearLayoutManager(requireContext())
 
-        // Amati data upcoming events dari HomeViewModel
         homeViewModel.upcomingEvents.observe(viewLifecycleOwner) { events ->
             if (events.isNullOrEmpty()) {
                 binding.recyclerViewCarousel.visibility = View.GONE
             } else {
-                binding.recyclerViewCarousel.adapter = CarouselAdapter(events)
+                binding.recyclerViewCarousel.adapter = CarouselAdapter(events) { event ->
+                    // Handle click and start DetailActivity
+                    val intent = Intent(requireContext(), DetailActivity::class.java).apply {
+                        putExtra("event_data", event) // Kirim data ke DetailActivity
+                    }
+                    startActivity(intent)
+                }
                 binding.recyclerViewCarousel.visibility = View.VISIBLE
             }
         }
 
-        // Amati data finished events dari HomeViewModel
         homeViewModel.finishedEvents.observe(viewLifecycleOwner) { events ->
             if (events.isNullOrEmpty()) {
                 binding.recyclerViewVertical.visibility = View.GONE
             } else {
-                binding.recyclerViewVertical.adapter = Adapter(events)
+                binding.recyclerViewVertical.adapter = Adapter(events) { event ->
+                    // Handle click and start DetailActivity
+                    val intent = Intent(requireContext(), DetailActivity::class.java).apply {
+                        putExtra("event_data", event) // Kirim data ke DetailActivity
+                    }
+                    startActivity(intent)
+                }
                 binding.recyclerViewVertical.visibility = View.VISIBLE
             }
         }

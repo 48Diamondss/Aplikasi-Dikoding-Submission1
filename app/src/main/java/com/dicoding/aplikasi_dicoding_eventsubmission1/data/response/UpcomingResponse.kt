@@ -1,6 +1,8 @@
 package com.dicoding.aplikasi_dicoding_eventsubmission1.data.response
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
 data class UpcomingResponse(
 	@field:SerializedName("listEvents")
@@ -13,6 +15,7 @@ data class UpcomingResponse(
 	val message: String = ""  // Mengubah menjadi non-null dengan default string kosong
 )
 
+@Parcelize
 data class ListEventsItem(
 	@field:SerializedName("imageLogo")
 	val imageLogo: String? = null,
@@ -37,6 +40,7 @@ data class ListEventsItem(
 
 	@field:SerializedName("description")
 	val description: String? = null,
+
 	@field:SerializedName("link")
 	val link: String? = null
-)
+) : Parcelable

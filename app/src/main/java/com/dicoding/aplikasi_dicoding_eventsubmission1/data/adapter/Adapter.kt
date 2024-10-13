@@ -8,8 +8,10 @@ import com.bumptech.glide.Glide
 import com.dicoding.aplikasi_dicoding_eventsubmission1.data.response.ListEventsItem
 import com.dicoding.aplikasi_dicoding_eventsubmission1.databinding.ItemReviewBinding
 
-class Adapter(private val events: List<ListEventsItem>) :
-    RecyclerView.Adapter<Adapter.VerticalViewHolder>() {
+class Adapter(
+    private val events: List<ListEventsItem>,
+    private val onItemClick: (ListEventsItem) -> Unit
+) : RecyclerView.Adapter<Adapter.VerticalViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VerticalViewHolder {
         val binding = ItemReviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -19,6 +21,7 @@ class Adapter(private val events: List<ListEventsItem>) :
     override fun onBindViewHolder(holder: VerticalViewHolder, position: Int) {
         val event = events[position]
         holder.bind(event)
+        holder.itemView.setOnClickListener { onItemClick(event) }  // Set click listener
     }
 
     override fun getItemCount(): Int = events.size

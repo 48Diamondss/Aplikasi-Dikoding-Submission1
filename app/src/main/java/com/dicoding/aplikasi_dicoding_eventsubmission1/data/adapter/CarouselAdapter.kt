@@ -8,8 +8,10 @@ import com.bumptech.glide.Glide
 import com.dicoding.aplikasi_dicoding_eventsubmission1.data.response.ListEventsItem
 import com.dicoding.aplikasi_dicoding_eventsubmission1.databinding.ItemCarouselEventBinding
 
-class CarouselAdapter(private val events: List<ListEventsItem>) :
-    RecyclerView.Adapter<CarouselAdapter.CarouselViewHolder>() {
+class CarouselAdapter(
+    private val events: List<ListEventsItem>,
+    private val onItemClick: (ListEventsItem) -> Unit
+) : RecyclerView.Adapter<CarouselAdapter.CarouselViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CarouselViewHolder {
         val binding = ItemCarouselEventBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -19,6 +21,7 @@ class CarouselAdapter(private val events: List<ListEventsItem>) :
     override fun onBindViewHolder(holder: CarouselViewHolder, position: Int) {
         val event = events[position]
         holder.bind(event)
+        holder.itemView.setOnClickListener { onItemClick(event) }  // Set click listener
     }
 
     override fun getItemCount(): Int = events.size
@@ -30,10 +33,8 @@ class CarouselAdapter(private val events: List<ListEventsItem>) :
                 .load(event.imageLogo)
                 .placeholder(ContextCompat.getDrawable(binding.imageLogo.context,
                     com.dicoding.aplikasi_dicoding_eventsubmission1.R.drawable.baseline_image_24))
-                // Placeholder saat gambar sedang dimuat
                 .error(ContextCompat.getDrawable(binding.imageLogo.context,
-                    com.dicoding.aplikasi_dicoding_eventsubmission1.R.drawable.
-                    baseline_signal_cellular_connected_no_internet_4_bar_24))
+                    com.dicoding.aplikasi_dicoding_eventsubmission1.R.drawable.baseline_signal_cellular_connected_no_internet_4_bar_24))
                 .into(binding.imageLogo)
         }
     }
