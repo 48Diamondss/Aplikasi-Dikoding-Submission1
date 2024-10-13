@@ -4,7 +4,7 @@ import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
-data class UpcomingResponse(
+data class ResponseApi(
 	@field:SerializedName("listEvents")
 	val listEvents: List<ListEventsItem> = listOf(),  // List tidak bisa null dan defaultnya adalah list kosong
 

@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.dicoding.aplikasi_dicoding_eventsubmission1.data.response.ListEventsItem
-import com.dicoding.aplikasi_dicoding_eventsubmission1.data.response.UpcomingResponse
+import com.dicoding.aplikasi_dicoding_eventsubmission1.data.response.ResponseApi
 import com.dicoding.aplikasi_dicoding_eventsubmission1.data.retrofit.ApiConfig
 import retrofit2.Call
 import retrofit2.Callback
@@ -34,8 +34,8 @@ class HomeViewModel : ViewModel() {
             val apiService = ApiConfig.getApiService()
 
             // Ambil event yang akan datang
-            apiService.getListEvents(active = 1).enqueue(object : Callback<UpcomingResponse> {
-                override fun onResponse(call: Call<UpcomingResponse>, response: Response<UpcomingResponse>) {
+            apiService.getListEvents(active = 1).enqueue(object : Callback<ResponseApi> {
+                override fun onResponse(call: Call<ResponseApi>, response: Response<ResponseApi>) {
                     if (response.isSuccessful) {
                         response.body()?.listEvents?.take(5)?.let {
                             _upcomingEvents.postValue(it)
@@ -53,7 +53,7 @@ class HomeViewModel : ViewModel() {
                     _isLoading.postValue(false)  // Selesai loading
                 }
 
-                override fun onFailure(call: Call<UpcomingResponse>, t: Throwable) {
+                override fun onFailure(call: Call<ResponseApi>, t: Throwable) {
                     Log.e("FetchEvents", "Network error: ${t.message}")
                     _upcomingEvents.postValue(emptyList())
                     _errorMessage.postValue("Network error: ${t.message}")
@@ -62,8 +62,8 @@ class HomeViewModel : ViewModel() {
             })
 
             // Ambil event yang sudah selesai
-            apiService.getListEvents(active = 0).enqueue(object : Callback<UpcomingResponse> {
-                override fun onResponse(call: Call<UpcomingResponse>, response: Response<UpcomingResponse>) {
+            apiService.getListEvents(active = 0).enqueue(object : Callback<ResponseApi> {
+                override fun onResponse(call: Call<ResponseApi>, response: Response<ResponseApi>) {
                     if (response.isSuccessful) {
                         response.body()?.listEvents?.take(5)?.let {
                             _finishedEvents.postValue(it)
@@ -81,7 +81,7 @@ class HomeViewModel : ViewModel() {
                     _isLoading.postValue(false)  // Selesai loading
                 }
 
-                override fun onFailure(call: Call<UpcomingResponse>, t: Throwable) {
+                override fun onFailure(call: Call<ResponseApi>, t: Throwable) {
                     Log.e("FetchEvents", "Network error: ${t.message}")
                     _finishedEvents.postValue(emptyList())
                     _errorMessage.postValue("Network error: ${t.message}")
