@@ -21,11 +21,14 @@ class HomeFragment : Fragment() {
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var mainViewModel: MainViewModel
     private var toastDisplayed = false
+    private var toastMessage: String? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         // Inisialisasi ViewModel
@@ -43,6 +46,12 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean("toastDisplayed", toastDisplayed)
+        outState.putString("toastMessage", toastMessage)
+    }
+
     private fun setupRecyclerView() {
         // Inisialisasi RecyclerView untuk carousel
         binding.recyclerViewCarousel.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -58,7 +67,6 @@ class HomeFragment : Fragment() {
                 binding.recyclerViewCarousel.adapter = CarouselAdapter(events)
                 binding.recyclerViewCarousel.visibility = View.VISIBLE
             }
-            // Kamu bisa hapus checkLoadingComplete() di sini, karena akan dikelola oleh isLoading
         }
 
         // Amati data finished events dari HomeViewModel
@@ -69,16 +77,11 @@ class HomeFragment : Fragment() {
                 binding.recyclerViewVertical.adapter = Adapter(events)
                 binding.recyclerViewVertical.visibility = View.VISIBLE
             }
-            // Kamu bisa hapus checkLoadingComplete() di sini, karena akan dikelola oleh isLoading
         }
 
         // Amati isLoading dari HomeViewModel
         homeViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            if (isLoading) {
-                binding.progressBar.visibility = View.VISIBLE
-            } else {
-                binding.progressBar.visibility = View.GONE
-            }
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
 
         // Amati LiveData untuk pesan error
@@ -88,21 +91,25 @@ class HomeFragment : Fragment() {
                 if (!toastDisplayed) {
                     Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                     toastDisplayed = true // Set flag menjadi true
+                    toastMessage = it // Simpan pesan toast
                 }
             } ?: run {
                 toastDisplayed = false // Reset flag jika tidak ada error
+                toastMessage = null
             }
         }
     }
 
-
     private fun updateUI(isConnected: Boolean) {
-        if (isConnected) {
-            // Cek apakah data upcoming dan finished events sudah ada
-            val isUpcomingEventsAvailable = homeViewModel.upcomingEvents.value != null && homeViewModel.upcomingEvents.value!!.isNotEmpty()
-            val isFinishedEventsAvailable = homeViewModel.finishedEvents.value != null && homeViewModel.finishedEvents.value!!.isNotEmpty()
+        // Cek apakah data upcoming dan finished events sudah ada
+        val isUpcomingEventsAvailable =
+            homeViewModel.upcomingEvents.value != null && homeViewModel.upcomingEvents.value!!.isNotEmpty()
 
-            // Jika data sudah ada, tidak perlu mengambil ulang
+        val isFinishedEventsAvailable =
+            homeViewModel.finishedEvents.value != null && homeViewModel.finishedEvents.value!!.isNotEmpty()
+
+        if (isConnected) {
+            // Jika terhubung ke internet dan data sudah ada, sembunyikan noInternetLayout dan progressBar
             if (isUpcomingEventsAvailable && isFinishedEventsAvailable) {
                 binding.noInternetLayout.visibility = View.GONE
                 binding.progressBar.visibility = View.GONE
@@ -112,11 +119,19 @@ class HomeFragment : Fragment() {
                 binding.noInternetLayout.visibility = View.GONE
                 binding.progressBar.visibility = View.VISIBLE
             }
+            // Reset toast message ketika terhubung
+            toastMessage = null
         } else {
             binding.noInternetLayout.visibility = View.VISIBLE
+            binding.progressBar.visibility = View.GONE
+
+            // Tampilkan toast hanya jika belum ditampilkan sebelumnya
+            if (isUpcomingEventsAvailable && isFinishedEventsAvailable && toastMessage == null) {
+                toastMessage = "No internet connection"
+                Toast.makeText(requireContext(), toastMessage, Toast.LENGTH_SHORT).show()
+            }
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
