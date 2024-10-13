@@ -119,7 +119,7 @@ class FinishedFragment : Fragment() {
     }
 
     private fun updateUI(isConnected: Boolean) {
-        // Cek apakah data ufinished events sudah ada
+        // Cek apakah data finished events sudah ada
         val isFinishedEventsAvailable =
             finishedViewModel.finishedEvents.value != null && finishedViewModel.finishedEvents.value!!.isNotEmpty()
 

@@ -116,7 +116,7 @@ class UpcomingFragment : Fragment() {
     }
 
     private fun updateUI(isConnected: Boolean) {
-        // Cek apakah data upcoming dan finished events sudah ada
+        // Cek apakah data upcoming
         val isUpcomingEventsAvailable =
             upcomingViewModel.upcomingEvents.value != null && upcomingViewModel.upcomingEvents.value!!.isNotEmpty()
 

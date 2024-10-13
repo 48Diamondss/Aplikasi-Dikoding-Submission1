@@ -21,7 +21,8 @@ class Adapter(
     override fun onBindViewHolder(holder: VerticalViewHolder, position: Int) {
         val event = events[position]
         holder.bind(event)
-        holder.itemView.setOnClickListener { onItemClick(event) }  // Set click listener
+        holder.itemView.setOnClickListener {
+            onItemClick(event) }
     }
 
     override fun getItemCount(): Int = events.size
