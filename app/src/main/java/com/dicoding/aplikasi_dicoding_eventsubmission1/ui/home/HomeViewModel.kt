@@ -22,60 +22,72 @@ class HomeViewModel : ViewModel() {
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> = _errorMessage
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
+
     fun fetchEvents() {
-        val apiService = ApiConfig.getApiService()
+        // Hanya tampilkan loading jika data belum ada
+        if (_upcomingEvents.value == null && _finishedEvents.value == null) {
+            _isLoading.postValue(true)  // Mulai loading
 
-        // Ambil event yang akan datang
-        apiService.getListEvents(active = 1).enqueue(object : Callback<UpcomingResponse> {
-            override fun onResponse(call: Call<UpcomingResponse>, response: Response<UpcomingResponse>) {
-                if (response.isSuccessful) {
-                    response.body()?.listEvents?.take(5)?.let {
-                        _upcomingEvents.postValue(it)
-                        _errorMessage.postValue(null) // Reset error message
-                    } ?: run {
-                        Log.e("FetchEvents", "ListEvents is null")
+            val apiService = ApiConfig.getApiService()
+
+            // Ambil event yang akan datang
+            apiService.getListEvents(active = 1).enqueue(object : Callback<UpcomingResponse> {
+                override fun onResponse(call: Call<UpcomingResponse>, response: Response<UpcomingResponse>) {
+                    if (response.isSuccessful) {
+                        response.body()?.listEvents?.take(5)?.let {
+                            _upcomingEvents.postValue(it)
+                            _errorMessage.postValue(null)
+                        } ?: run {
+                            Log.e("FetchEvents", "ListEvents is null")
+                            _upcomingEvents.postValue(emptyList())
+                            _errorMessage.postValue("No upcoming events available.")
+                        }
+                    } else {
+                        Log.e("FetchEvents", "Error: ${response.errorBody()?.string()}")
                         _upcomingEvents.postValue(emptyList())
-                        _errorMessage.postValue("No upcoming events available.")
+                        _errorMessage.postValue("Failed to load upcoming events.")
                     }
-                } else {
-                    Log.e("FetchEvents", "Error: ${response.errorBody()?.string()}")
+                    _isLoading.postValue(false)  // Selesai loading
+                }
+
+                override fun onFailure(call: Call<UpcomingResponse>, t: Throwable) {
+                    Log.e("FetchEvents", "Network error: ${t.message}")
                     _upcomingEvents.postValue(emptyList())
-                    _errorMessage.postValue("Failed to load upcoming events.")
+                    _errorMessage.postValue("Network error: ${t.message}")
+                    _isLoading.postValue(false)  // Selesai loading
                 }
-            }
+            })
 
-            override fun onFailure(call: Call<UpcomingResponse>, t: Throwable) {
-                Log.e("FetchEvents", "Network error: ${t.message}")
-                _upcomingEvents.postValue(emptyList())
-                _errorMessage.postValue("Network error: ${t.message}") // Set pesan error
-            }
-        })
-
-        // Ambil event yang sudah selesai
-        apiService.getListEvents(active = 0).enqueue(object : Callback<UpcomingResponse> {
-            override fun onResponse(call: Call<UpcomingResponse>, response: Response<UpcomingResponse>) {
-                if (response.isSuccessful) {
-                    response.body()?.listEvents?.take(5)?.let {
-                        _finishedEvents.postValue(it)
-                        _errorMessage.postValue(null) // Reset error message
-                    } ?: run {
-                        Log.e("FetchEvents", "ListEvents is null")
+            // Ambil event yang sudah selesai
+            apiService.getListEvents(active = 0).enqueue(object : Callback<UpcomingResponse> {
+                override fun onResponse(call: Call<UpcomingResponse>, response: Response<UpcomingResponse>) {
+                    if (response.isSuccessful) {
+                        response.body()?.listEvents?.take(5)?.let {
+                            _finishedEvents.postValue(it)
+                            _errorMessage.postValue(null)
+                        } ?: run {
+                            Log.e("FetchEvents", "ListEvents is null")
+                            _finishedEvents.postValue(emptyList())
+                            _errorMessage.postValue("No finished events available.")
+                        }
+                    } else {
+                        Log.e("FetchEvents", "Error: ${response.errorBody()?.string()}")
                         _finishedEvents.postValue(emptyList())
-                        _errorMessage.postValue("No finished events available.")
+                        _errorMessage.postValue("Failed to load finished events.")
                     }
-                } else {
-                    Log.e("FetchEvents", "Error: ${response.errorBody()?.string()}")
-                    _finishedEvents.postValue(emptyList())
-                    _errorMessage.postValue("Failed to load finished events.")
+                    _isLoading.postValue(false)  // Selesai loading
                 }
-            }
 
-            override fun onFailure(call: Call<UpcomingResponse>, t: Throwable) {
-                Log.e("FetchEvents", "Network error: ${t.message}")
-                _finishedEvents.postValue(emptyList())
-                _errorMessage.postValue("Network error: ${t.message}") // Set pesan error
-            }
-        })
+                override fun onFailure(call: Call<UpcomingResponse>, t: Throwable) {
+                    Log.e("FetchEvents", "Network error: ${t.message}")
+                    _finishedEvents.postValue(emptyList())
+                    _errorMessage.postValue("Network error: ${t.message}")
+                    _isLoading.postValue(false)  // Selesai loading
+                }
+            })
+        }
     }
 }
-

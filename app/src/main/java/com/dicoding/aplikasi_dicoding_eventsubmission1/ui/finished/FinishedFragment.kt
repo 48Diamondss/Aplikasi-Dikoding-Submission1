@@ -23,8 +23,7 @@ class FinishedFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val finishedViewModel =
-            ViewModelProvider(this)[FinishedViewModel::class.java]
+        val finishedViewModel = ViewModelProvider(this)[FinishedViewModel::class.java]
 
         _binding = FragmentFinishedBinding.inflate(inflater, container, false)
         val root: View = binding.root
