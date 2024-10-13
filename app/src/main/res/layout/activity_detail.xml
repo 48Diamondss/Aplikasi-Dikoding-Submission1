@@ -25,12 +25,14 @@
                 android:id="@+id/text_event_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:paddingTop="8dp" />
 
             <!-- Penyelenggara Acara -->
             <TextView
+                android:gravity="center"
                 android:id="@+id/text_owner_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -39,6 +41,7 @@
 
             <!-- Waktu Acara -->
             <TextView
+                android:gravity="center"
                 android:id="@+id/text_begin_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -47,6 +50,7 @@
 
             <!-- Sisa Kuota -->
             <TextView
+                android:gravity="center"
                 android:id="@+id/text_quota"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

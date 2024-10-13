@@ -36,7 +36,6 @@ class DetailActivity : AppCompatActivity() {
         binding.textOwnerName.text = event.ownerName ?: "Penyelenggara Tidak Tersedia"
         binding.textBeginTime.text = event.beginTime ?: "Waktu Tidak Tersedia"
         binding.textQuota.text = "${event.quota?.minus(event.registrants ?: 0) ?: 0} Kuota Tersisa"
-       // binding.textDescription.text = event.description ?: "Deskripsi Tidak Tersedia"
 
         binding.textDescription.text  = HtmlCompat.fromHtml(
             event.description?: "Deskripsi Tidak Tersedia".toString(),
