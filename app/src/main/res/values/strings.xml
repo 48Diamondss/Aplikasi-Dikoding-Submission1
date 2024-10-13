@@ -6,4 +6,5 @@
     <string name="upcoming_events">Upcoming Events</string>
     <string name="finished_events">Finished Events</string>
     <string name="event_image">event_image</string>
+    <string name="no_internet_connection">No Internet Connection</string>
 </resources>
