@@ -19,6 +19,9 @@ class HomeViewModel : ViewModel() {
     private val _finishedEvents = MutableLiveData<List<ListEventsItem>>()
     val finishedEvents: LiveData<List<ListEventsItem>> = _finishedEvents
 
+    private val _errorMessage = MutableLiveData<String?>()
+    val errorMessage: LiveData<String?> = _errorMessage
+
     fun fetchEvents() {
         val apiService = ApiConfig.getApiService()
 
@@ -26,25 +29,25 @@ class HomeViewModel : ViewModel() {
         apiService.getListEvents(active = 1).enqueue(object : Callback<UpcomingResponse> {
             override fun onResponse(call: Call<UpcomingResponse>, response: Response<UpcomingResponse>) {
                 if (response.isSuccessful) {
-                    response.body()?.listEvents?.take(5)?.let { // Ambil maksimal 5 event
+                    response.body()?.listEvents?.take(5)?.let {
                         _upcomingEvents.postValue(it)
+                        _errorMessage.postValue(null) // Reset error message
                     } ?: run {
-                        // Jika listEvents adalah null
                         Log.e("FetchEvents", "ListEvents is null")
                         _upcomingEvents.postValue(emptyList())
+                        _errorMessage.postValue("No upcoming events available.")
                     }
                 } else {
-                    // Tangani kesalahan respons yang tidak berhasil
                     Log.e("FetchEvents", "Error: ${response.errorBody()?.string()}")
                     _upcomingEvents.postValue(emptyList())
+                    _errorMessage.postValue("Failed to load upcoming events.")
                 }
             }
 
             override fun onFailure(call: Call<UpcomingResponse>, t: Throwable) {
-
                 Log.e("FetchEvents", "Network error: ${t.message}")
                 _upcomingEvents.postValue(emptyList())
-
+                _errorMessage.postValue("Network error: ${t.message}") // Set pesan error
             }
         })
 
@@ -52,25 +55,27 @@ class HomeViewModel : ViewModel() {
         apiService.getListEvents(active = 0).enqueue(object : Callback<UpcomingResponse> {
             override fun onResponse(call: Call<UpcomingResponse>, response: Response<UpcomingResponse>) {
                 if (response.isSuccessful) {
-                    response.body()?.listEvents?.take(5)?.let { // Ambil maksimal 5 event
+                    response.body()?.listEvents?.take(5)?.let {
                         _finishedEvents.postValue(it)
+                        _errorMessage.postValue(null) // Reset error message
                     } ?: run {
-                        // Jika listEvents adalah null
                         Log.e("FetchEvents", "ListEvents is null")
                         _finishedEvents.postValue(emptyList())
+                        _errorMessage.postValue("No finished events available.")
                     }
                 } else {
-                    // Tangani kesalahan respons yang tidak berhasil
                     Log.e("FetchEvents", "Error: ${response.errorBody()?.string()}")
                     _finishedEvents.postValue(emptyList())
+                    _errorMessage.postValue("Failed to load finished events.")
                 }
             }
 
             override fun onFailure(call: Call<UpcomingResponse>, t: Throwable) {
                 Log.e("FetchEvents", "Network error: ${t.message}")
-
                 _finishedEvents.postValue(emptyList())
+                _errorMessage.postValue("Network error: ${t.message}") // Set pesan error
             }
         })
     }
 }
+

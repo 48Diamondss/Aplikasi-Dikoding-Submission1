@@ -5,10 +5,8 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Bundle
-import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -21,10 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var connectivityManager: ConnectivityManager
-    private val _isConnected = MutableLiveData<Boolean>()
-    val isConnected: LiveData<Boolean> get() = _isConnected
-
-    private var toastDisplayed = false // Variabel untuk melacak status toast
+    private val viewModel: MainViewModel by viewModels() // Mendapatkan instance ViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,26 +45,13 @@ class MainActivity : AppCompatActivity() {
         observeNetwork()
 
         // Periksa status koneksi saat aplikasi dibuka
-        if (savedInstanceState == null) {
-            checkInitialConnection()
-        } else {
-            _isConnected.value = savedInstanceState.getBoolean("isConnected", true)
-        }
+        checkInitialConnection()
+
     }
 
     private fun checkInitialConnection() {
         val activeNetwork = connectivityManager.activeNetworkInfo
-        if (activeNetwork == null || !activeNetwork.isConnected) {
-            _isConnected.postValue(false)
-            showToast("No internet connection")
-        } else {
-            _isConnected.postValue(true)
-        }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putBoolean("isConnected", _isConnected.value != false)
+        viewModel.setConnectionStatus(activeNetwork != null && activeNetwork.isConnected)
     }
 
     private fun observeNetwork() {
@@ -80,27 +62,14 @@ class MainActivity : AppCompatActivity() {
 
         val networkCallback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
-                _isConnected.postValue(true)
-                toastDisplayed = false // Reset status toast saat terhubung
-                showToast("Internet connected")
+                viewModel.setConnectionStatus(true)
             }
 
             override fun onLost(network: Network) {
-                _isConnected.postValue(false)
-                // Tampilkan toast hanya jika belum ditampilkan
-                if (!toastDisplayed) {
-                    toastDisplayed = true
-                    showToast("No internet connection")
-                }
+                viewModel.setConnectionStatus(false)
             }
         }
 
         connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
-    }
-
-    private fun showToast(message: String) {
-        runOnUiThread {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-        }
     }
 }

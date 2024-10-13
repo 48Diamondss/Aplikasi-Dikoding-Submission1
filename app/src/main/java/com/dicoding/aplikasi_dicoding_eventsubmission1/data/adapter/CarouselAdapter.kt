@@ -2,6 +2,7 @@ package com.dicoding.aplikasi_dicoding_eventsubmission1.data.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.dicoding.aplikasi_dicoding_eventsubmission1.data.response.ListEventsItem
@@ -27,6 +28,12 @@ class CarouselAdapter(private val events: List<ListEventsItem>) :
             binding.textName.text = event.name
             Glide.with(binding.imageLogo.context)
                 .load(event.imageLogo)
+                .placeholder(ContextCompat.getDrawable(binding.imageLogo.context,
+                    com.dicoding.aplikasi_dicoding_eventsubmission1.R.drawable.baseline_image_24))
+                // Placeholder saat gambar sedang dimuat
+                .error(ContextCompat.getDrawable(binding.imageLogo.context,
+                    com.dicoding.aplikasi_dicoding_eventsubmission1.R.drawable.
+                    baseline_signal_cellular_connected_no_internet_4_bar_24))
                 .into(binding.imageLogo)
         }
     }
