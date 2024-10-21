@@ -64,32 +64,33 @@ class UpcomingViewModel : ViewModel() {
         _isLoading.postValue(true)  // Mulai loading
 
         val apiServicesearch = ApiConfig.getApiService()
-        apiServicesearch.getListEvents(active = 1, query = query).enqueue(object : Callback<ResponseApi> {
-            override fun onResponse(call: Call<ResponseApi>, response: Response<ResponseApi>) {
-                if (response.isSuccessful) {
-                    response.body()?.listEvents?.let {
-                        _upcomingEvents.postValue(it)
-                        _errorMessage.postValue(null)
-                    } ?: run {
-                        Log.e("SearchEvents", "ListEvents is null")
+        apiServicesearch.getListEvents(active = 1, query = query)
+            .enqueue(object : Callback<ResponseApi> {
+                override fun onResponse(call: Call<ResponseApi>, response: Response<ResponseApi>) {
+                    if (response.isSuccessful) {
+                        response.body()?.listEvents?.let {
+                            _upcomingEvents.postValue(it)
+                            _errorMessage.postValue(null)
+                        } ?: run {
+                            Log.e("SearchEvents", "ListEvents is null")
+                            _upcomingEvents.postValue(emptyList())
+                            _errorMessage.postValue("No events found.")
+                        }
+                    } else {
+                        Log.e("SearchEvents", "Error: ${response.errorBody()?.string()}")
                         _upcomingEvents.postValue(emptyList())
-                        _errorMessage.postValue("No events found.")
+                        _errorMessage.postValue("Failed to load events.")
                     }
-                } else {
-                    Log.e("SearchEvents", "Error: ${response.errorBody()?.string()}")
-                    _upcomingEvents.postValue(emptyList())
-                    _errorMessage.postValue("Failed to load events.")
+                    _isLoading.postValue(false)  // Selesai loading
                 }
-                _isLoading.postValue(false)  // Selesai loading
-            }
 
-            override fun onFailure(call: Call<ResponseApi>, t: Throwable) {
-                Log.e("SearchEvents", "Network error: ${t.message}")
-                _upcomingEvents.postValue(emptyList())
-                _errorMessage.postValue("Network error: ${t.message}")
-                _isLoading.postValue(false)  // Selesai loading
-            }
-        })
+                override fun onFailure(call: Call<ResponseApi>, t: Throwable) {
+                    Log.e("SearchEvents", "Network error: ${t.message}")
+                    _upcomingEvents.postValue(emptyList())
+                    _errorMessage.postValue("Network error: ${t.message}")
+                    _isLoading.postValue(false)  // Selesai loading
+                }
+            })
     }
 
 

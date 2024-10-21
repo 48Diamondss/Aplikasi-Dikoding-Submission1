@@ -56,7 +56,8 @@ class HomeFragment : Fragment() {
 
     private fun setupRecyclerView() {
         // Inisialisasi RecyclerView untuk carousel
-        binding.recyclerViewCarousel.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.recyclerViewCarousel.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
         // Inisialisasi RecyclerView untuk finished events
         binding.recyclerViewVertical.layoutManager = LinearLayoutManager(requireContext())

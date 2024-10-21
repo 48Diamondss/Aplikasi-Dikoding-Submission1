@@ -14,7 +14,8 @@ class CarouselAdapter(
 ) : RecyclerView.Adapter<CarouselAdapter.CarouselViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CarouselViewHolder {
-        val binding = ItemCarouselEventBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemCarouselEventBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return CarouselViewHolder(binding)
     }
 
@@ -22,20 +23,30 @@ class CarouselAdapter(
         val event = events[position]
         holder.bind(event)
         holder.itemView.setOnClickListener {
-            onItemClick(event) }
+            onItemClick(event)
+        }
     }
 
     override fun getItemCount(): Int = events.size
 
-    inner class CarouselViewHolder(private val binding: ItemCarouselEventBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class CarouselViewHolder(private val binding: ItemCarouselEventBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(event: ListEventsItem) {
             binding.textName.text = event.name
             Glide.with(binding.imageLogo.context)
                 .load(event.imageLogo)
-                .placeholder(ContextCompat.getDrawable(binding.imageLogo.context,
-                    com.dicoding.aplikasi_dicoding_eventsubmission1.R.drawable.baseline_image_24))
-                .error(ContextCompat.getDrawable(binding.imageLogo.context,
-                    com.dicoding.aplikasi_dicoding_eventsubmission1.R.drawable.baseline_signal_cellular_connected_no_internet_4_bar_24))
+                .placeholder(
+                    ContextCompat.getDrawable(
+                        binding.imageLogo.context,
+                        com.dicoding.aplikasi_dicoding_eventsubmission1.R.drawable.baseline_image_24
+                    )
+                )
+                .error(
+                    ContextCompat.getDrawable(
+                        binding.imageLogo.context,
+                        com.dicoding.aplikasi_dicoding_eventsubmission1.R.drawable.baseline_signal_cellular_connected_no_internet_4_bar_24
+                    )
+                )
                 .into(binding.imageLogo)
         }
     }

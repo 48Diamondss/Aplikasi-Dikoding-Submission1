@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import com.dicoding.aplikasi_dicoding_eventsubmission1.data.response.ListEventsItem
 import com.dicoding.aplikasi_dicoding_eventsubmission1.databinding.ActivityDetailBinding
 
-@Suppress("DEPRECATION")
+
 class DetailActivity : AppCompatActivity() {
 
     private lateinit var event: ListEventsItem
@@ -37,8 +37,8 @@ class DetailActivity : AppCompatActivity() {
         binding.textBeginTime.text = event.beginTime ?: "Waktu Tidak Tersedia"
         binding.textQuota.text = "${event.quota?.minus(event.registrants ?: 0) ?: 0} Kuota Tersisa"
 
-        binding.textDescription.text  = HtmlCompat.fromHtml(
-            event.description?: "Deskripsi Tidak Tersedia".toString(),
+        binding.textDescription.text = HtmlCompat.fromHtml(
+            event.description ?: "Deskripsi Tidak Tersedia",
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
 
