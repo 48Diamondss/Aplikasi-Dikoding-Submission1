@@ -22,6 +22,8 @@ activity = "1.9.3"
 roomCompiler = "2.5.2"
 roomRuntime = "2.5.2"
 
+roomKtx = "2.5.2"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -44,6 +46,7 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomCompiler" }
 
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

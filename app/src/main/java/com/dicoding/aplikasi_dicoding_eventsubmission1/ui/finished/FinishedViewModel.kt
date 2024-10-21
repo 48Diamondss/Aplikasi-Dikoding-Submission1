@@ -1,15 +1,12 @@
 package com.dicoding.aplikasi_dicoding_eventsubmission1.ui.finished
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.dicoding.aplikasi_dicoding_eventsubmission1.data.response.ListEventsItem
-import com.dicoding.aplikasi_dicoding_eventsubmission1.data.response.ResponseApi
 import com.dicoding.aplikasi_dicoding_eventsubmission1.data.retrofit.ApiConfig
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.launch
 
 class FinishedViewModel : ViewModel() {
 
@@ -26,71 +23,59 @@ class FinishedViewModel : ViewModel() {
         if (_finishedEvents.value == null || forceReload) {
             _isLoading.postValue(true)  // Mulai loading
 
-            val apiService = ApiConfig.getApiService()
+            viewModelScope.launch {
+                try {
+                    val apiService = ApiConfig.getApiService()
+                    val response = apiService.getListEvents(active = 0)
 
-            // Ambil event yang akan datang
-            apiService.getListEvents(active = 0).enqueue(object : Callback<ResponseApi> {
-                override fun onResponse(call: Call<ResponseApi>, response: Response<ResponseApi>) {
                     if (response.isSuccessful) {
-                        response.body()?.listEvents?.take(40)?.let {
-                            _finishedEvents.postValue(it)
+                        response.body()?.listEvents?.let {
+                            _finishedEvents.postValue(it.take(40)) // Ambil 40 item
                             _errorMessage.postValue(null)
                         } ?: run {
-                            Log.e("FetchEvents", "ListEvents is null")
                             _finishedEvents.postValue(emptyList())
-                            _errorMessage.postValue("No upcoming events available.")
+                            _errorMessage.postValue("No finished events available.")
                         }
                     } else {
-                        Log.e("FetchEvents", "Error: ${response.errorBody()?.string()}")
                         _finishedEvents.postValue(emptyList())
-                        _errorMessage.postValue("Failed to load upcoming events.")
+                        _errorMessage.postValue("Failed to load finished events.")
                     }
-                    _isLoading.postValue(false)  // Selesai loading
-                }
-
-                override fun onFailure(call: Call<ResponseApi>, t: Throwable) {
-                    Log.e("FetchEvents", "Network error: ${t.message}")
+                } catch (e: Exception) {
                     _finishedEvents.postValue(emptyList())
-                    _errorMessage.postValue("Network error: ${t.message}")
+                    _errorMessage.postValue("Network error: ${e.message}")
+                } finally {
                     _isLoading.postValue(false)  // Selesai loading
                 }
-            })
+            }
         }
     }
-
 
     fun searchEvents(query: String) {
         _isLoading.postValue(true)  // Mulai loading
 
-        val apiServicesearch = ApiConfig.getApiService()
-        apiServicesearch.getListEvents(active = 0, query = query)
-            .enqueue(object : Callback<ResponseApi> {
-                override fun onResponse(call: Call<ResponseApi>, response: Response<ResponseApi>) {
-                    if (response.isSuccessful) {
-                        response.body()?.listEvents?.let {
-                            _finishedEvents.postValue(it)
-                            _errorMessage.postValue(null)
-                        } ?: run {
-                            Log.e("SearchEvents", "ListEvents is null")
-                            _finishedEvents.postValue(emptyList())
-                            _errorMessage.postValue("No events found.")
-                        }
-                    } else {
-                        Log.e("SearchEvents", "Error: ${response.errorBody()?.string()}")
+        viewModelScope.launch {
+            try {
+                val apiServiceSearch = ApiConfig.getApiService()
+                val response = apiServiceSearch.getListEvents(active = 0, query = query)
+
+                if (response.isSuccessful) {
+                    response.body()?.listEvents?.let {
+                        _finishedEvents.postValue(it)
+                        _errorMessage.postValue(null)
+                    } ?: run {
                         _finishedEvents.postValue(emptyList())
-                        _errorMessage.postValue("Failed to load events.")
+                        _errorMessage.postValue("No events found.")
                     }
-                    _isLoading.postValue(false)  // Selesai loading
-                }
-
-                override fun onFailure(call: Call<ResponseApi>, t: Throwable) {
-                    Log.e("SearchEvents", "Network error: ${t.message}")
+                } else {
                     _finishedEvents.postValue(emptyList())
-                    _errorMessage.postValue("Network error: ${t.message}")
-                    _isLoading.postValue(false)  // Selesai loading
+                    _errorMessage.postValue("Failed to load events.")
                 }
-            })
+            } catch (e: Exception) {
+                _finishedEvents.postValue(emptyList())
+                _errorMessage.postValue("Network error: ${e.message}")
+            } finally {
+                _isLoading.postValue(false)  // Selesai loading
+            }
+        }
     }
-
-
 }

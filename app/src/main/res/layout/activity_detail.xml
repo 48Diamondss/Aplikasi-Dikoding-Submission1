@@ -20,6 +20,16 @@
                 android:contentDescription="@string/event_image"
                 android:scaleType="fitCenter" /> <!-- Ganti scaleType di sini -->
 
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_favorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:layout_margin="16dp"
+                android:src="@drawable/baseline_favorite_24"
+                tools:ignore="ContentDescription" />
+
+
             <!-- Nama Acara -->
             <TextView
                 android:id="@+id/text_event_name"

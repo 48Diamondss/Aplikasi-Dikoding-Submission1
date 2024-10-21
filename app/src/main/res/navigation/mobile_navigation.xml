@@ -22,4 +22,10 @@
         android:name="com.dicoding.aplikasi_dicoding_eventsubmission1.ui.finished.FinishedFragment"
         android:label="@string/title_finished"
         tools:layout="@layout/fragment_finished" />
+
+    <fragment
+        android:id="@+id/navigation_favourite"
+        android:name="com.dicoding.aplikasi_dicoding_eventsubmission1.ui.favourite.FavoriteFragment"
+        android:label="@string/favorite"
+        tools:layout="@layout/fragment_favourite" />
 </navigation>
