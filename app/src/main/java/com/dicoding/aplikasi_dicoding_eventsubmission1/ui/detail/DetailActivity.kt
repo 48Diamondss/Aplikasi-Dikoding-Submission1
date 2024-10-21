@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import com.bumptech.glide.Glide
+import com.dicoding.aplikasi_dicoding_eventsubmission1.R
 import com.dicoding.aplikasi_dicoding_eventsubmission1.data.response.ListEventsItem
 import com.dicoding.aplikasi_dicoding_eventsubmission1.databinding.ActivityDetailBinding
 
@@ -24,6 +25,14 @@ class DetailActivity : AppCompatActivity() {
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Tampilkan tombol back di kiri toolbar (menggunakan ActionBar dari tema)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
+
+        // Tangani aksi klik tombol back
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(true)
+
         // Ambil data dari Intent
         event = intent.getParcelableExtra("event_data") ?: run {
             Log.e("DetailActivity", "Event data is missing.")
@@ -33,6 +42,12 @@ class DetailActivity : AppCompatActivity() {
 
         // Tampilkan data di UI
         displayEventDetails(event)
+    }
+
+    // tombol back di toolbar
+    override fun onSupportNavigateUp(): Boolean {
+        finish() // Kembali ke halaman sebelumnya
+        return true
     }
 
     @SuppressLint("SetTextI18n")
