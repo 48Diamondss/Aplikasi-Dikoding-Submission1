@@ -14,7 +14,7 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
+        buildConfigField ("String", "BASE_URL", "\"https://event-api.dicoding.dev/\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -35,11 +35,14 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
+        //noinspection DataBindingWithoutKapt
         dataBinding = true
         viewBinding = true
+        buildConfig = true
     }
 
     dataBinding{
+        //noinspection DataBindingWithoutKapt
         android.buildFeatures.dataBinding = true
         android.buildFeatures.viewBinding = true
     }

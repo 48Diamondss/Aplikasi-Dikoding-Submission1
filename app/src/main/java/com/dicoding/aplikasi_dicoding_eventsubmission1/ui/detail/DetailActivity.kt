@@ -11,6 +11,7 @@ import com.dicoding.aplikasi_dicoding_eventsubmission1.data.response.ListEventsI
 import com.dicoding.aplikasi_dicoding_eventsubmission1.databinding.ActivityDetailBinding
 
 
+@Suppress("DEPRECATION")
 class DetailActivity : AppCompatActivity() {
 
     private lateinit var event: ListEventsItem
@@ -31,29 +32,31 @@ class DetailActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun displayEventDetails(event: ListEventsItem) {
-        // Tampilkan data ke dalam View
-        binding.textEventName.text = event.name ?: "Nama Tidak Tersedia"
-        binding.textOwnerName.text = event.ownerName ?: "Penyelenggara Tidak Tersedia"
-        binding.textBeginTime.text = event.beginTime ?: "Waktu Tidak Tersedia"
-        binding.textQuota.text = "${event.quota?.minus(event.registrants ?: 0) ?: 0} Kuota Tersisa"
+        binding.apply {
+            // Tampilkan data ke dalam View
+            textEventName.text = event.name ?: "Nama Tidak Tersedia"
+            textOwnerName.text = event.ownerName ?: "Penyelenggara Tidak Tersedia"
+            textBeginTime.text = event.beginTime ?: "Waktu Tidak Tersedia"
+            textQuota.text = "${event.quota?.minus(event.registrants ?: 0) ?: 0} Kuota Tersisa"
 
-        binding.textDescription.text = HtmlCompat.fromHtml(
-            event.description ?: "Deskripsi Tidak Tersedia",
-            HtmlCompat.FROM_HTML_MODE_LEGACY
-        )
+            textDescription.text = HtmlCompat.fromHtml(
+                event.description ?: "Deskripsi Tidak Tersedia",
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
 
-        // Memuat gambar menggunakan Glide
-        Glide.with(this)
-            .load(event.imageLogo ?: event.mediaCover) // Menggunakan imageLogo atau mediaCover
-            .into(binding.imageEvent)
+            // Memuat gambar menggunakan Glide
+            Glide.with(this@DetailActivity) // Ganti YourActivity dengan nama kelas aktivitasmu
+                .load(event.imageLogo ?: event.mediaCover) // Menggunakan imageLogo atau mediaCover
+                .into(imageEvent)
 
-        // Set up listener untuk tombol membuka link
-        binding.buttonOpenLink.setOnClickListener {
-            val link = event.link
-            if (!link.isNullOrEmpty()) {
-                val intent = Intent(Intent.ACTION_VIEW)
-                intent.data = Uri.parse(link)
-                startActivity(intent)
+            // Set up listener untuk tombol membuka link
+            buttonOpenLink.setOnClickListener {
+                val link = event.link
+                if (!link.isNullOrEmpty()) {
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.data = Uri.parse(link)
+                    startActivity(intent)
+                }
             }
         }
     }
