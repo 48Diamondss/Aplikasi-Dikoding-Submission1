@@ -18,7 +18,8 @@ import com.dicoding.aplikasi_dicoding_eventsubmission1.ui.detail.DetailActivity
 class UpcomingFragment : Fragment() {
 
     private var _binding: FragmentUpcomingBinding? = null
-    private val binding get() = _binding!!
+    private val binding: FragmentUpcomingBinding
+        get() = _binding ?: throw IllegalStateException("Binding is not initialized")
 
     private lateinit var upcomingViewModel: UpcomingViewModel
     private lateinit var mainViewModel: MainViewModel

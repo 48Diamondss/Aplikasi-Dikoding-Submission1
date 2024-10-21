@@ -18,7 +18,8 @@ import com.dicoding.aplikasi_dicoding_eventsubmission1.ui.detail.DetailActivity
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
-    private val binding get() = _binding!!
+    private val binding: FragmentHomeBinding
+        get() = _binding ?: throw IllegalStateException("Binding is not initialized")
 
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var mainViewModel: MainViewModel
