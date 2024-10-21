@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import com.bumptech.glide.Glide
@@ -24,7 +25,11 @@ class DetailActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Ambil data dari Intent
-        event = intent.getParcelableExtra("event_data") ?: return
+        event = intent.getParcelableExtra("event_data") ?: run {
+            Log.e("DetailActivity", "Event data is missing.")
+            finish() // Menghentikan aktivitas
+            return
+        }
 
         // Tampilkan data di UI
         displayEventDetails(event)
