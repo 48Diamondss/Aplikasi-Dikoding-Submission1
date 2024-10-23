@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.dicoding.aplikasi_dicoding_eventsubmission1.data.entitiy.EventEntitiy
+import com.dicoding.aplikasi_dicoding_eventsubmission1.data.entitiy.FavoriteEntity
 
 
 @Dao
@@ -30,4 +31,26 @@ interface EventDao {
 
     @Query("SELECT * FROM eventTable WHERE isActive = :isActive AND name LIKE '%' || :query || '%' ORDER BY date(beginTime) ASC")
     suspend fun searchEvents(query: String, isActive: Int): List<EventEntitiy>
+
+
+    // Favorite events
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addFavoriteEvent(favorite: FavoriteEntity)
+
+    @Query("DELETE FROM favoriteTable WHERE id = :eventId")
+    suspend fun deleteFavoriteEvent(eventId: String)
+
+    @Query("SELECT EXISTS(SELECT 1 FROM favoriteTable WHERE id = :eventId)")
+    suspend fun isEventFavorite(eventId: String): Boolean
+
+
+    // Get all favorite event IDs
+    @Query("SELECT * FROM favoriteTable")
+    suspend fun getFavoriteEventIds(): List<FavoriteEntity>
+
+    // Get event details for favorite IDs
+    @Query("SELECT * FROM EventTable WHERE id IN (:favoriteIds)")
+    suspend fun getEventsByIds(favoriteIds: List<String>): List<EventEntitiy>
+
+
 }

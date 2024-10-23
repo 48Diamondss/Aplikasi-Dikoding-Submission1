@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.dicoding.aplikasi_dicoding_eventsubmission1.R.drawable
 import com.dicoding.aplikasi_dicoding_eventsubmission1.data.entitiy.EventEntitiy
 import com.dicoding.aplikasi_dicoding_eventsubmission1.databinding.ItemCarouselEventBinding
 
@@ -38,13 +39,13 @@ class CarouselAdapter(
                 .placeholder(
                     ContextCompat.getDrawable(
                         binding.imageLogo.context,
-                        com.dicoding.aplikasi_dicoding_eventsubmission1.R.drawable.baseline_image_24
+                        drawable.baseline_image_24
                     )
                 )
                 .error(
                     ContextCompat.getDrawable(
                         binding.imageLogo.context,
-                        com.dicoding.aplikasi_dicoding_eventsubmission1.R.drawable.baseline_signal_cellular_connected_no_internet_4_bar_24
+                        drawable.baseline_signal_cellular_connected_no_internet_4_bar_24
                     )
                 )
                 .into(binding.imageLogo)

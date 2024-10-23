@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.dicoding.aplikasi_dicoding_eventsubmission1.data.entitiy.EventEntitiy
+import com.dicoding.aplikasi_dicoding_eventsubmission1.data.entitiy.FavoriteEntity
 import com.dicoding.aplikasi_dicoding_eventsubmission1.data.retrofit.ApiService
 import com.dicoding.aplikasi_dicoding_eventsubmission1.data.room.EventDao
 import retrofit2.HttpException
@@ -188,6 +189,36 @@ class EventRepository private constructor(
         } catch (dbException: Exception) {
             // Penanganan error untuk masalah database atau query
             emit(Result.Error("Terjadi kesalahan saat mengambil data dari database."))
+        }
+    }
+
+    // Add a favorite event
+    suspend fun addFavoriteEvent(eventId: String) {
+        eventDao.addFavoriteEvent(FavoriteEntity(eventId))
+    }
+
+    // Remove a favorite event
+    suspend fun deleteFavoriteEvent(eventId: String) {
+        eventDao.deleteFavoriteEvent(eventId)
+    }
+
+    // Check if an event is a favorite
+    suspend fun isEventFavorite(eventId: String): Boolean {
+        return eventDao.isEventFavorite(eventId)
+    }
+
+    // Method to get favorite events
+    suspend fun getFavoriteEvents(): Result<List<EventEntitiy>> {
+        return try {
+            val favoriteIds = eventDao.getFavoriteEventIds().map { it.id }
+            if (favoriteIds.isNotEmpty()) {
+                val events = eventDao.getEventsByIds(favoriteIds)
+                Result.Success(events)
+            } else {
+                Result.Success(emptyList())
+            }
+        } catch (e: Exception) {
+            Result.Error(e.message ?: "Unknown error")
         }
     }
 

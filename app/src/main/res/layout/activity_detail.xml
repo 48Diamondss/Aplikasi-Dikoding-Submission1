@@ -26,8 +26,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|bottom"
                 android:layout_margin="16dp"
-                android:src="@drawable/baseline_favorite_24"
-                tools:ignore="ContentDescription" />
+                android:src="@drawable/baseline_yes_favorite_24"
+                tools:ignore="ContentDescription,ImageContrastCheck,SpeakableTextPresentCheck" />
 
 
             <!-- Nama Acara -->
