@@ -9,14 +9,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import com.bumptech.glide.Glide
 import com.dicoding.aplikasi_dicoding_eventsubmission1.R
-import com.dicoding.aplikasi_dicoding_eventsubmission1.data.response.ListEventsItem
+import com.dicoding.aplikasi_dicoding_eventsubmission1.data.entitiy.EventEntitiy
 import com.dicoding.aplikasi_dicoding_eventsubmission1.databinding.ActivityDetailBinding
 
 
 @Suppress("DEPRECATION")
 class DetailActivity : AppCompatActivity() {
 
-    private lateinit var event: ListEventsItem
+    private lateinit var event: EventEntitiy
     private lateinit var binding: ActivityDetailBinding
 
 
@@ -47,12 +47,12 @@ class DetailActivity : AppCompatActivity() {
 
     // tombol back di toolbar
     override fun onSupportNavigateUp(): Boolean {
-        finish() // Kembali ke halaman sebelumnya
+        finish()
         return true
     }
 
     @SuppressLint("SetTextI18n")
-    private fun displayEventDetails(event: ListEventsItem) {
+    private fun displayEventDetails(event: EventEntitiy) {
         binding.apply {
             // Tampilkan data ke dalam View
             textEventName.text = event.name ?: "Nama Tidak Tersedia"
@@ -66,8 +66,8 @@ class DetailActivity : AppCompatActivity() {
             )
 
             // Memuat gambar menggunakan Glide
-            Glide.with(this@DetailActivity) // Ganti YourActivity dengan nama kelas aktivitasmu
-                .load(event.imageLogo ?: event.mediaCover) // Menggunakan imageLogo atau mediaCover
+            Glide.with(this@DetailActivity)
+                .load(event.imageLogo ?: event.mediaCover)
                 .into(imageEvent)
 
             // Set up listener untuk tombol membuka link

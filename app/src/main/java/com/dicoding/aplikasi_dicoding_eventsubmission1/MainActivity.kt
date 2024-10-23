@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var connectivityManager: ConnectivityManager
-    private val viewModel: MainViewModel by viewModels() // Mendapatkan instance ViewModel
+    private val viewModel: NetworkViewModel by viewModels() // Mendapatkan instance ViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

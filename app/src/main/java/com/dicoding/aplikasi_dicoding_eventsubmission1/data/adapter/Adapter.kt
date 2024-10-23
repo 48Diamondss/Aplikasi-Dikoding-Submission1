@@ -5,12 +5,12 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.dicoding.aplikasi_dicoding_eventsubmission1.data.response.ListEventsItem
+import com.dicoding.aplikasi_dicoding_eventsubmission1.data.entitiy.EventEntitiy
 import com.dicoding.aplikasi_dicoding_eventsubmission1.databinding.ItemReviewBinding
 
 class Adapter(
-    private val events: List<ListEventsItem>,
-    private val onItemClick: (ListEventsItem) -> Unit
+    private val events: List<EventEntitiy>,
+    private val onItemClick: (EventEntitiy) -> Unit
 ) : RecyclerView.Adapter<Adapter.VerticalViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VerticalViewHolder {
@@ -30,7 +30,7 @@ class Adapter(
 
     inner class VerticalViewHolder(private val binding: ItemReviewBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(event: ListEventsItem) {
+        fun bind(event: EventEntitiy) {
             binding.textName.text = event.name
 
             // Menggunakan Glide untuk memuat gambar dengan placeholder dan error image

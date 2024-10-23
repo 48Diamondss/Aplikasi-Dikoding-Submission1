@@ -17,30 +17,45 @@ data class ResponseApi(
 
 @Parcelize
 data class ListEventsItem(
-    @field:SerializedName("imageLogo")
-    val imageLogo: String? = null,
-
-    @field:SerializedName("mediaCover")
-    val mediaCover: String? = null,
+    @field:SerializedName("id")
+    val id: String,
 
     @field:SerializedName("name")
-    val name: String? = null,
+    val name: String,
 
-    @field:SerializedName("ownerName")
-    val ownerName: String? = null,
+    @field:SerializedName("summary")
+    val summary: String,
 
-    @field:SerializedName("beginTime")
-    val beginTime: String? = null,
-
-    @field:SerializedName("quota")
-    val quota: Int? = null,
+    @field:SerializedName("mediaCover")
+    val mediaCover: String,
 
     @field:SerializedName("registrants")
-    val registrants: Int? = null,
+    val registrants: Int,
 
-    @field:SerializedName("description")
-    val description: String? = null,
+    @field:SerializedName("imageLogo")
+    val imageLogo: String,
 
     @field:SerializedName("link")
-    val link: String? = null
+    val link: String,
+
+    @field:SerializedName("description")
+    val description: String,
+
+    @field:SerializedName("ownerName")
+    val ownerName: String,
+
+    @field:SerializedName("cityName")
+    val cityName: String,
+
+    @field:SerializedName("quota")
+    val quota: Int,
+
+    @field:SerializedName("beginTime")
+    val beginTime: String,
+
+    @field:SerializedName("endTime")
+    val endTime: String,
+
+    @field:SerializedName("category")
+    val category: String
 ) : Parcelable
