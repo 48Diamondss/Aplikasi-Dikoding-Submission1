@@ -12,7 +12,7 @@ import java.io.IOException
 class EventRepository private constructor(
     private val apiService: ApiService,
     private val eventDao: EventDao,
-    ) {
+) {
 
     fun getUpcomingEvent(): LiveData<Result<List<EventEntitiy>>> = liveData {
         emit(Result.Loading)
@@ -52,7 +52,10 @@ class EventRepository private constructor(
                     eventDao.insertEvents(eventList) // Insert new events
                     emit(Result.Success(eventList))
                 } catch (e: IOException) {
-                    Log.e("EventRepository", "Network error: ${e.message}") // Log specific network error
+                    Log.e(
+                        "EventRepository",
+                        "Network error: ${e.message}"
+                    ) // Log specific network error
                     emit(Result.Error("Gagal memuat acara mendatang, periksa koneksi jaringan Anda."))
                 } catch (e: HttpException) {
                     Log.e("EventRepository", "API error: ${e.message()}") // Log specific API error
@@ -72,7 +75,10 @@ class EventRepository private constructor(
         emit(Result.Loading)
         try {
             val databaseLocal = eventDao.getFinishedEvent()
-            Log.d("EventRepository", "getFinishedEvent - Local Data: $databaseLocal") // Log local data
+            Log.d(
+                "EventRepository",
+                "getFinishedEvent - Local Data: $databaseLocal"
+            ) // Log local data
 
             if (databaseLocal.isNotEmpty()) {
                 emit(Result.Success(databaseLocal))
@@ -101,7 +107,10 @@ class EventRepository private constructor(
                             isActive = false
                         )
                     }
-                    Log.d("EventRepository", "getFinishedEvent - API Data: $eventList") // Log API data
+                    Log.d(
+                        "EventRepository",
+                        "getFinishedEvent - API Data: $eventList"
+                    ) // Log API data
 
                     eventDao.deleteFinishedEvents() // Clear old data
                     eventDao.insertEvents(eventList) // Insert new data
@@ -126,14 +135,26 @@ class EventRepository private constructor(
 
     fun searchEvents(active: Int, query: String): LiveData<Result<List<EventEntitiy>>> = liveData {
         emit(Result.Loading)
+
         try {
-            val searchResult = eventDao.searchEvents(query, active)
-            if (searchResult.isNotEmpty()) {
-                emit(Result.Success(searchResult))
+
+            val localSearchResults = eventDao.searchEvents(query, active)
+
+            if (localSearchResults.isNotEmpty()) {
+
+                emit(Result.Success(localSearchResults))
             } else {
-                try {
-                    val response = apiService.getListEvents(active, query)
-                    val events = response.listEvents
+
+                val response = try {
+                    apiService.getListEvents(active, query)
+                } catch (apiException: Exception) {
+                    emit(Result.Error("Gagal menghubungi server. Silakan periksa koneksi internet Anda."))
+                    return@liveData
+                }
+
+                val events = response.listEvents
+                if (events.isNotEmpty()) {
+                    // Map dari API response ke database entity
                     val eventList = events.map { event ->
                         EventEntitiy(
                             id = event.id,
@@ -153,18 +174,22 @@ class EventRepository private constructor(
                             isActive = false
                         )
                     }
+
+                    // Hapus data yang lama jika diperlukan, dan simpan yang baru
                     eventDao.deleteFinishedEvents()
                     eventDao.insertEvents(eventList)
+
                     emit(Result.Success(eventList))
-                } catch (e: Exception) {
+                } else {
+                    // Jika API tidak mengembalikan hasil apapun
                     emit(Result.Error("Event tidak ditemukan"))
                 }
             }
-        } catch (e: Exception) {
-            emit(Result.Error("Event tidak ditemukan"))
+        } catch (dbException: Exception) {
+            // Penanganan error untuk masalah database atau query
+            emit(Result.Error("Terjadi kesalahan saat mengambil data dari database."))
         }
     }
-
 
     // Singleton instance
     companion object {

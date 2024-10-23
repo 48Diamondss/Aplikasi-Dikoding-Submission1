@@ -31,7 +31,11 @@ class HomeFragment : Fragment() {
     private lateinit var adapter: Adapter
     private lateinit var carouselAdapter: CarouselAdapter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -57,7 +61,8 @@ class HomeFragment : Fragment() {
 
         // Setup carousel RecyclerView
         carouselAdapter = CarouselAdapter(emptyList()) { event -> onEventClick(event) }
-        binding.recyclerViewCarousel.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.recyclerViewCarousel.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.recyclerViewCarousel.adapter = carouselAdapter
     }
 
@@ -75,7 +80,11 @@ class HomeFragment : Fragment() {
             if (isConnected) {
                 binding.noInternetLayout.visibility = View.GONE
                 if (networkViewModel.hasShownNoInternetToast) {
-                    Toast.makeText(requireContext(), "Internet kembali tersedia", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Internet kembali tersedia",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
                 networkViewModel.setHasShownNoInternetToast(false) // Reset flag saat internet tersambung
             } else {
@@ -96,23 +105,31 @@ class HomeFragment : Fragment() {
                     binding.progressBar.visibility = View.VISIBLE
                     binding.recyclerViewCarousel.visibility = View.GONE
                 }
+
                 is Result.Success -> {
                     binding.progressBar.visibility = View.GONE
                     val events = result.data
                     if (events.isEmpty()) {
                         binding.recyclerViewCarousel.visibility = View.GONE
-                        Toast.makeText(requireContext(), "Tidak ada acara mendatang yang ditemukan", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            requireContext(),
+                            "Tidak ada acara mendatang yang ditemukan",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } else {
                         // Update adapter untuk carousel
-                        carouselAdapter = CarouselAdapter(events.take(5)) { event -> onEventClick(event) } // Ambil beberapa acara untuk carousel
+                        carouselAdapter =
+                            CarouselAdapter(events.take(5)) { event -> onEventClick(event) } // Ambil beberapa acara untuk carousel
                         binding.recyclerViewCarousel.adapter = carouselAdapter
                         binding.recyclerViewCarousel.visibility = View.VISIBLE
                     }
                 }
+
                 is Result.Error -> {
                     binding.progressBar.visibility = View.GONE
                     binding.recyclerViewCarousel.visibility = View.GONE
-                    Toast.makeText(requireContext(), "Error: ${result.error}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Error: ${result.error}", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
@@ -124,23 +141,31 @@ class HomeFragment : Fragment() {
                     binding.progressBar.visibility = View.VISIBLE
                     binding.recyclerViewVertical.visibility = View.GONE
                 }
+
                 is Result.Success -> {
                     binding.progressBar.visibility = View.GONE
                     val events = result.data
                     if (events.isEmpty()) {
                         binding.recyclerViewVertical.visibility = View.GONE
-                        Toast.makeText(requireContext(), "Tidak ada acara yang sudah selesai", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            requireContext(),
+                            "Tidak ada acara yang sudah selesai",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } else {
                         // Update adapter untuk vertical RecyclerView
-                        adapter = Adapter(events.take(5)) { event -> onEventClick(event) } // Ambil hanya 5 acara selesai
+                        adapter =
+                            Adapter(events.take(5)) { event -> onEventClick(event) } // Ambil hanya 5 acara selesai
                         binding.recyclerViewVertical.adapter = adapter
                         binding.recyclerViewVertical.visibility = View.VISIBLE
                     }
                 }
+
                 is Result.Error -> {
                     binding.progressBar.visibility = View.GONE
                     binding.recyclerViewVertical.visibility = View.GONE
-                    Toast.makeText(requireContext(), "Error: ${result.error}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Error: ${result.error}", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
