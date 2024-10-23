@@ -12,7 +12,8 @@ android {
     defaultConfig {
         applicationId = "com.dicoding.aplikasi_dicoding_eventsubmission1"
         minSdk = 24
-        targetSdk = 34
+        //noinspection OldTargetApi
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
         buildConfigField ("String", "BASE_URL", "\"https://event-api.dicoding.dev/\"")
