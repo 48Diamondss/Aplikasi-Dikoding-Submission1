@@ -176,7 +176,7 @@ class UpcomingFragment : Fragment() {
 
                 // Cek apakah toast error sudah ditampilkan
                 if (!viewModel.hasShownErrorToast) {
-                    Toast.makeText(requireContext(), "Error: ${result.error}", Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), result.error, Toast.LENGTH_SHORT)
                         .show()
                     viewModel.hasShownErrorToast = true
                 }
@@ -214,7 +214,7 @@ class UpcomingFragment : Fragment() {
                 is Result.Error -> {
                     binding.progressBar.visibility = View.GONE
                     binding.recyclerViewVertical.visibility = View.GONE
-                    Toast.makeText(requireContext(), "Error: ${result.error}", Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), result.error, Toast.LENGTH_SHORT)
                         .show()
                 }
             }
