@@ -30,6 +30,9 @@ class EventViewModel(
 
     var hasShownErrorToast = false
 
+    // Flag to track if the reminder toast has been shown
+    var hasShownReminderToast = false
+
 
     fun getUpcomingEvents() = repository.getUpcomingEvent()
     fun getFinishedEvents() = repository.getFinishedEvent()

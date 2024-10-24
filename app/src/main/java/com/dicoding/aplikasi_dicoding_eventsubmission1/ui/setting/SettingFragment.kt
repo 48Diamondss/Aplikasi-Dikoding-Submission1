@@ -56,17 +56,34 @@ class SettingFragment : Fragment() {
     private fun setupListeners() {
         binding.darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
             viewModel.saveThemeSetting(isChecked)
-            Log.d("SettingsFragment", "Reminder setting changed: $isChecked")
+            Log.d("SettingsFragment", "Dark mode setting changed: $isChecked")
         }
+
         binding.ReminderSwitc.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setReminder(isChecked)
             Log.d("SettingsFragment", "Reminder setting changed: $isChecked")
-            Toast.makeText(
-                context,
-                "Reminder ${if (isChecked) "enabled" else "disabled"}",
-                Toast.LENGTH_SHORT
-            ).show()
+
+            if (isChecked) {
+                if (!viewModel.hasShownReminderToast) {
+                    Toast.makeText(
+                        context,
+                        "Reminder enabled",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    viewModel.hasShownReminderToast = true // Set flag ke true setelah menampilkan toast
+                }
+            } else {
+                if (viewModel.hasShownReminderToast) {
+                    Toast.makeText(
+                        context,
+                        "Reminder disabled",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    viewModel.hasShownReminderToast = false // Reset flag ke false setelah menampilkan toast
+                }
+            }
         }
     }
+
 
 }

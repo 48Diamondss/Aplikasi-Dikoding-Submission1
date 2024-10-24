@@ -28,6 +28,7 @@ class UpcomingFragment : Fragment() {
     private val viewModel: EventViewModel by viewModels {
         ViewModelFactory.getInstance(requireActivity())
     }
+
     private lateinit var adapter: Adapter
 
     private val networkViewModel: NetworkViewModel by viewModels({ requireActivity() })
