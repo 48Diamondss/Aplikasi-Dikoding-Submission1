@@ -49,8 +49,19 @@ class SettingFragment : Fragment() {
 
         // Observe reminder settings
         viewModel.getReminderState().observe(viewLifecycleOwner) { isReminderActive ->
+            binding.ReminderSwitc.setOnCheckedChangeListener(null)
             binding.ReminderSwitc.isChecked = isReminderActive
+            setupListeners()
         }
+
+        // Mengamati pesan toast
+        viewModel.toastMessage.observe(viewLifecycleOwner) { message ->
+            message?.let {
+                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                viewModel.clearToastMessage() // Menghapus pesan setelah ditampilkan
+            }
+        }
+
     }
 
     private fun setupListeners() {
@@ -62,26 +73,6 @@ class SettingFragment : Fragment() {
         binding.ReminderSwitc.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setReminder(isChecked)
             Log.d("SettingsFragment", "Reminder setting changed: $isChecked")
-
-            if (isChecked) {
-                if (!viewModel.hasShownReminderToast) {
-                    Toast.makeText(
-                        context,
-                        "Reminder enabled",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    viewModel.hasShownReminderToast = true // Set flag ke true setelah menampilkan toast
-                }
-            } else {
-                if (viewModel.hasShownReminderToast) {
-                    Toast.makeText(
-                        context,
-                        "Reminder disabled",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    viewModel.hasShownReminderToast = false // Reset flag ke false setelah menampilkan toast
-                }
-            }
         }
     }
 

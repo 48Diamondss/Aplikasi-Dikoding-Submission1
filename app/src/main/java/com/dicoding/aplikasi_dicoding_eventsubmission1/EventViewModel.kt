@@ -30,8 +30,13 @@ class EventViewModel(
 
     var hasShownErrorToast = false
 
-    // Flag to track if the reminder toast has been shown
-    var hasShownReminderToast = false
+    // MutableLiveData untuk menampilkan pesan toast
+    private val _toastMessage = MutableLiveData<String?>()
+    val toastMessage: MutableLiveData<String?> get() = _toastMessage
+
+    // Flag untuk melacak apakah toast pengingat sudah ditampilkan
+    private var hasShownReminderToast = false
+
 
 
     fun getUpcomingEvents() = repository.getUpcomingEvent()
@@ -89,6 +94,15 @@ class EventViewModel(
         viewModelScope.launch {
             pref.setReminderSetting(isReminderActive)
             updateReminderSchedule(isReminderActive)
+
+            // Logika untuk menampilkan toast
+            if (isReminderActive && !hasShownReminderToast) {
+                hasShownReminderToast = true
+                _toastMessage.value = "Pengingat diaktifkan"
+            } else if (!isReminderActive && hasShownReminderToast) {
+                hasShownReminderToast = false
+                _toastMessage.value = "Pengingat dinonaktifkan"
+            }
         }
     }
 
@@ -108,6 +122,10 @@ class EventViewModel(
                 workManager.cancelAllWorkByTag(MyReminderWorker.WORK_NAME)
             }
         }
+    }
+
+    fun clearToastMessage() {
+        _toastMessage.value = null
     }
 
 
