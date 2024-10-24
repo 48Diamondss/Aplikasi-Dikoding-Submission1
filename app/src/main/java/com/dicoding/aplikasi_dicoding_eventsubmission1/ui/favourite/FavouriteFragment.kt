@@ -65,26 +65,29 @@ class FavoriteFragment : Fragment() {
                 is Result.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
                     binding.recyclerViewVertical.visibility = View.GONE
-                    binding.noInternetLayout.visibility = View.GONE
+                    binding.noFavoriteLayout.visibility = View.GONE
                 }
+
                 is Result.Success -> {
                     binding.progressBar.visibility = View.GONE
                     val events = result.data
                     if (events.isEmpty()) {
                         binding.recyclerViewVertical.visibility = View.GONE
-                        binding.noInternetLayout.visibility = View.VISIBLE
+                        binding.noFavoriteLayout.visibility = View.VISIBLE
                     } else {
-                        binding.noInternetLayout.visibility = View.GONE
+                        binding.noFavoriteLayout.visibility = View.GONE
                         adapter = Adapter(events) { event -> onEventClick(event) }
                         binding.recyclerViewVertical.adapter = adapter
                         binding.recyclerViewVertical.visibility = View.VISIBLE
                     }
                 }
+
                 is Result.Error -> {
                     binding.progressBar.visibility = View.GONE
                     binding.recyclerViewVertical.visibility = View.GONE
-                    binding.noInternetLayout.visibility = View.VISIBLE
-                    Toast.makeText(requireContext(), "Error: ${result.error}", Toast.LENGTH_SHORT).show()
+                    binding.noFavoriteLayout.visibility = View.VISIBLE
+                    Toast.makeText(requireContext(), "Error: ${result.error}", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
@@ -96,7 +99,7 @@ class FavoriteFragment : Fragment() {
         super.onResume()
         viewModel.fetchFavoriteEvents() // Refresh the data when fragment resumes
     }
-    
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

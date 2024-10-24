@@ -213,6 +213,11 @@ class EventRepository private constructor(
             val favoriteIds = eventDao.getFavoriteEventIds().map { it.id }
             if (favoriteIds.isNotEmpty()) {
                 val events = eventDao.getEventsByIds(favoriteIds)
+
+                // Reverse the list to have the newest on top
+                Result.Success(events.reversed())
+
+                // Nda tampil paling atas / klick
                 Result.Success(events)
             } else {
                 Result.Success(emptyList())

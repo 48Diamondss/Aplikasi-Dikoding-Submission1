@@ -28,4 +28,10 @@
         android:name="com.dicoding.aplikasi_dicoding_eventsubmission1.ui.favourite.FavoriteFragment"
         android:label="@string/favorite"
         tools:layout="@layout/fragment_favourite" />
+
+    <fragment
+        android:id="@+id/navigation_setting"
+        android:name="com.dicoding.aplikasi_dicoding_eventsubmission1.ui.setting.SettingFragment"
+        android:label="@string/setting"
+        tools:layout="@layout/fragment_setting" />
 </navigation>
