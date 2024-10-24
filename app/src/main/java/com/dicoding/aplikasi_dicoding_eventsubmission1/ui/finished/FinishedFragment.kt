@@ -101,7 +101,7 @@ class FinishedFragment : Fragment() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query.isNullOrEmpty()) {
                     // Kembalikan hasil ke semua acara dan muat ulang data jika query kosong
-                    observeUpcomingEvents()
+                    observeGetFinishedEvent()
                 } else {
                     // Panggil fungsi pencarian di ViewModel
                     searchEvents(query)
@@ -112,7 +112,7 @@ class FinishedFragment : Fragment() {
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText.isNullOrEmpty()) {
                     // Muat ulang data jika input kosong
-                    observeUpcomingEvents()
+                    observeGetFinishedEvent()
                 } else {
                     // Panggil fungsi pencarian di ViewModel
                     searchEvents(newText)
@@ -130,8 +130,8 @@ class FinishedFragment : Fragment() {
         }
     }
 
-    private fun observeUpcomingEvents() {
-        viewModel.getUpcomingEvents().observe(viewLifecycleOwner) { result ->
+    private fun observeGetFinishedEvent() {
+        viewModel.getFinishedEvents().observe(viewLifecycleOwner) { result ->
             viewModel.hasShownNoEventsToast = false // Reset status saat memuat acara
             handleSearchResult(result)
         }
@@ -182,7 +182,7 @@ class FinishedFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        // Observe upcomong events for the vertical RecyclerView
+        // Observe Finished events for the vertical RecyclerView
         viewModel.getFinishedEvents().observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Loading -> {
@@ -197,7 +197,7 @@ class FinishedFragment : Fragment() {
                     binding.recyclerViewVertical.visibility = if (events.isEmpty()) {
                         if (!networkViewModel.hasShownNoInternetToast) {
 
-                            showToast("Tidak ada acara mendatang yang ditemukan")
+                            showToast("Tidak ada acara selesai yang ditemukan")
                             networkViewModel.setHasShownNoInternetToast(true)
                         }
                         View.GONE
