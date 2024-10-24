@@ -5,8 +5,10 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -14,12 +16,17 @@ import androidx.navigation.ui.setupWithNavController
 import com.dicoding.aplikasi_dicoding_eventsubmission1.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var connectivityManager: ConnectivityManager
-    private val viewModel: NetworkViewModel by viewModels() // Mendapatkan instance ViewModel
+    private val viewModel: NetworkViewModel by viewModels() // Network viewmodel
+
+    private val mainViewModel: EventViewModel by viewModels { // Theme viewmodel
+        ViewModelFactory.getInstance(this)
+    }
+
+    private lateinit var networkCallback: ConnectivityManager.NetworkCallback
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,33 +51,63 @@ class MainActivity : AppCompatActivity() {
 
         // Inisialisasi ConnectivityManager dan pantau jaringan di seluruh aplikasi
         connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+
         observeNetwork()
 
         // Periksa status koneksi saat aplikasi dibuka
         checkInitialConnection()
 
+        // Observe Setting
+        observeSetting()
+
     }
 
     private fun checkInitialConnection() {
-        val activeNetwork = connectivityManager.activeNetworkInfo
-        viewModel.setConnectionStatus(activeNetwork != null && activeNetwork.isConnected)
+        val network = connectivityManager.activeNetwork
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(network)
+        val isConnected =
+            networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+        viewModel.setConnectionStatus(isConnected)
     }
 
     private fun observeNetwork() {
         val networkRequest =
-            NetworkRequest.Builder().addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR).build()
+            NetworkRequest.Builder()
+                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+                .build()
 
-        val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        // Inisialisasi networkCallback
+        networkCallback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
+                Log.d("NetworkStatus", "Network available")
                 viewModel.setConnectionStatus(true)
             }
 
             override fun onLost(network: Network) {
+                Log.d("NetworkStatus", "Network lost")
                 viewModel.setConnectionStatus(false)
             }
         }
 
         connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
     }
+
+    // Observe Setting
+    private fun observeSetting() {
+        mainViewModel.getThemeSettings().observe(this) { isDarkModeActive: Boolean ->
+            if (isDarkModeActive) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        }
+    }
+
+    // Unregister NetworkCallback saat activity dihancurkan
+    override fun onDestroy() {
+        super.onDestroy()
+        connectivityManager.unregisterNetworkCallback(networkCallback)
+    }
+
 }

@@ -10,11 +10,16 @@ class NetworkViewModel : ViewModel() {
 
     // Menyimpan status apakah toast sudah ditampilkan
     private var _hasShownNoInternetToast = false
+
     val hasShownNoInternetToast: Boolean
         get() = _hasShownNoInternetToast
 
     fun setConnectionStatus(isConnected: Boolean) {
         _isConnected.postValue(isConnected)
+        if (isConnected) {
+            // Reset flag saat terhubung kembali
+            _hasShownNoInternetToast = false
+        }
     }
 
     fun setHasShownNoInternetToast(shown: Boolean) {

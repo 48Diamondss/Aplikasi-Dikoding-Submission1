@@ -31,6 +31,8 @@ class HomeFragment : Fragment() {
     private lateinit var adapter: Adapter
     private lateinit var carouselAdapter: CarouselAdapter
 
+    private val networkViewModel: NetworkViewModel by viewModels({ requireActivity() })
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -73,25 +75,23 @@ class HomeFragment : Fragment() {
         startActivity(intent)
     }
 
-    private fun observeNetworkConnection() {
-        val networkViewModel: NetworkViewModel by viewModels({ requireActivity() })
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
 
+    private fun observeNetworkConnection() {
         networkViewModel.isConnected.observe(viewLifecycleOwner) { isConnected ->
             if (isConnected) {
                 binding.noInternetLayout.visibility = View.GONE
                 if (networkViewModel.hasShownNoInternetToast) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Internet kembali tersedia",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    showToast("Internet kembali tersedia")
                 }
-                networkViewModel.setHasShownNoInternetToast(false) // Reset flag saat internet tersambung
+                networkViewModel.setHasShownNoInternetToast(false)
             } else {
                 binding.noInternetLayout.visibility = View.VISIBLE
                 if (!networkViewModel.hasShownNoInternetToast) {
-                    Toast.makeText(requireContext(), "Internet terputus", Toast.LENGTH_SHORT).show()
-                    networkViewModel.setHasShownNoInternetToast(true) // Set flag agar tidak tampil berulang kali
+                    showToast("Tidak ada koneksi internet")
+                    networkViewModel.setHasShownNoInternetToast(true)
                 }
             }
         }
@@ -109,27 +109,30 @@ class HomeFragment : Fragment() {
                 is Result.Success -> {
                     binding.progressBar.visibility = View.GONE
                     val events = result.data
-                    if (events.isEmpty()) {
-                        binding.recyclerViewCarousel.visibility = View.GONE
-                        Toast.makeText(
-                            requireContext(),
-                            "Tidak ada acara mendatang yang ditemukan",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                    binding.recyclerViewCarousel.visibility = if (events.isEmpty()) {
+                        if (!networkViewModel.hasShownNoInternetToast) {
+
+                            showToast("Tidak ada acara mendatang yang ditemukan")
+                            networkViewModel.setHasShownNoInternetToast(true)
+                        }
+                        View.GONE
                     } else {
                         // Update adapter untuk carousel
                         carouselAdapter =
-                            CarouselAdapter(events.take(5)) { event -> onEventClick(event) } // Ambil beberapa acara untuk carousel
+                            CarouselAdapter(events.take(5)) { event -> onEventClick(event) }
                         binding.recyclerViewCarousel.adapter = carouselAdapter
-                        binding.recyclerViewCarousel.visibility = View.VISIBLE
+                        View.VISIBLE
                     }
                 }
 
                 is Result.Error -> {
                     binding.progressBar.visibility = View.GONE
                     binding.recyclerViewCarousel.visibility = View.GONE
-                    Toast.makeText(requireContext(), "Error: ${result.error}", Toast.LENGTH_SHORT)
-                        .show()
+                    if (!networkViewModel.hasShownNoInternetToast) {
+
+                        showToast("Error: ${result.error}")
+                        networkViewModel.setHasShownNoInternetToast(true)
+                    }
                 }
             }
         }
@@ -145,27 +148,30 @@ class HomeFragment : Fragment() {
                 is Result.Success -> {
                     binding.progressBar.visibility = View.GONE
                     val events = result.data
-                    if (events.isEmpty()) {
-                        binding.recyclerViewVertical.visibility = View.GONE
-                        Toast.makeText(
-                            requireContext(),
-                            "Tidak ada acara yang sudah selesai",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                    binding.recyclerViewVertical.visibility = if (events.isEmpty()) {
+                        if (!networkViewModel.hasShownNoInternetToast) {
+
+                            showToast("Tidak ada acara yang sudah selesai ditemukan")
+                            networkViewModel.setHasShownNoInternetToast(true)
+                        }
+                        View.GONE
                     } else {
                         // Update adapter untuk vertical RecyclerView
                         adapter =
-                            Adapter(events.take(5)) { event -> onEventClick(event) } // Ambil hanya 5 acara selesai
+                            Adapter(events.take(5)) { event -> onEventClick(event) }
                         binding.recyclerViewVertical.adapter = adapter
-                        binding.recyclerViewVertical.visibility = View.VISIBLE
+                        View.VISIBLE
                     }
                 }
 
                 is Result.Error -> {
                     binding.progressBar.visibility = View.GONE
                     binding.recyclerViewVertical.visibility = View.GONE
-                    Toast.makeText(requireContext(), "Error: ${result.error}", Toast.LENGTH_SHORT)
-                        .show()
+                    if (!networkViewModel.hasShownNoInternetToast) {
+
+                        showToast("Error: ${result.error}")
+                        networkViewModel.setHasShownNoInternetToast(true)
+                    }
                 }
             }
         }

@@ -30,6 +30,7 @@ class FinishedFragment : Fragment() {
         ViewModelFactory.getInstance(requireActivity())
     }
     private lateinit var adapter: Adapter
+    private val networkViewModel: NetworkViewModel by viewModels({ requireActivity() })
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,8 +74,6 @@ class FinishedFragment : Fragment() {
     }
 
     private fun observeNetworkConnection() {
-        val networkViewModel: NetworkViewModel by viewModels({ requireActivity() })
-
         networkViewModel.isConnected.observe(viewLifecycleOwner) { isConnected ->
             if (isConnected) {
                 binding.noInternetLayout.visibility = View.GONE
@@ -152,11 +151,8 @@ class FinishedFragment : Fragment() {
                     binding.recyclerViewVertical.visibility = View.GONE
 
                     if (!viewModel.hasShownNoEventsToast) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Tidak ada acara yang ditemukan",
-                            Toast.LENGTH_SHORT
-                        ).show()
+
+                        showToast("Tidak ada acara yang ditemukan")
                         viewModel.hasShownNoEventsToast = true
                     }
                 } else {
@@ -178,8 +174,7 @@ class FinishedFragment : Fragment() {
 
                 // Cek apakah toast error sudah ditampilkan
                 if (!viewModel.hasShownErrorToast) {
-                    Toast.makeText(requireContext(), result.error, Toast.LENGTH_SHORT)
-                        .show()
+                    showToast("Error: ${result.error}")
                     viewModel.hasShownErrorToast = true
                 }
             }
@@ -198,29 +193,40 @@ class FinishedFragment : Fragment() {
                 is Result.Success -> {
                     binding.progressBar.visibility = View.GONE
                     val events = result.data
-                    if (events.isEmpty()) {
-                        binding.recyclerViewVertical.visibility = View.GONE
-                        Toast.makeText(
-                            requireContext(),
-                            "Tidak ada acara yang sudah selesai",
-                            Toast.LENGTH_SHORT
-                        ).show()
+
+                    binding.recyclerViewVertical.visibility = if (events.isEmpty()) {
+                        if (!networkViewModel.hasShownNoInternetToast) {
+
+                            showToast("Tidak ada acara mendatang yang ditemukan")
+                            networkViewModel.setHasShownNoInternetToast(true)
+                        }
+                        View.GONE
+
                     } else {
                         // Update adapter untuk vertical RecyclerView
                         adapter = Adapter(events) { event -> onEventClick(event) }
                         binding.recyclerViewVertical.adapter = adapter
-                        binding.recyclerViewVertical.visibility = View.VISIBLE
+
+                        View.VISIBLE
                     }
                 }
 
                 is Result.Error -> {
                     binding.progressBar.visibility = View.GONE
                     binding.recyclerViewVertical.visibility = View.GONE
-                    Toast.makeText(requireContext(), result.error, Toast.LENGTH_SHORT)
-                        .show()
+
+                    if (!networkViewModel.hasShownNoInternetToast) {
+                        showToast("Error: ${result.error}")
+                        networkViewModel.setHasShownNoInternetToast(true)
+                    }
+
                 }
             }
         }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {
