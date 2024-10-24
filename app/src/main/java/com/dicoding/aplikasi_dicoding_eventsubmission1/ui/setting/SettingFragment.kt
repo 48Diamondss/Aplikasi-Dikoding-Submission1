@@ -1,9 +1,11 @@
 package com.dicoding.aplikasi_dicoding_eventsubmission1.ui.setting
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.dicoding.aplikasi_dicoding_eventsubmission1.EventViewModel
@@ -44,14 +46,27 @@ class SettingFragment : Fragment() {
         viewModel.getThemeSettings().observe(viewLifecycleOwner) { isDarkModeActive ->
             binding.darkModeSwitch.isChecked = isDarkModeActive
         }
+
+        // Observe reminder settings
+        viewModel.getReminderState().observe(viewLifecycleOwner) { isReminderActive ->
+            binding.ReminderSwitc.isChecked = isReminderActive
+        }
     }
 
     private fun setupListeners() {
         binding.darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
             viewModel.saveThemeSetting(isChecked)
+            Log.d("SettingsFragment", "Reminder setting changed: $isChecked")
+        }
+        binding.ReminderSwitc.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setReminder(isChecked)
+            Log.d("SettingsFragment", "Reminder setting changed: $isChecked")
+            Toast.makeText(
+                context,
+                "Reminder ${if (isChecked) "enabled" else "disabled"}",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
-
-
 
 }

@@ -52,5 +52,7 @@ interface EventDao {
     @Query("SELECT * FROM EventTable WHERE id IN (:favoriteIds)")
     suspend fun getEventsByIds(favoriteIds: List<String>): List<EventEntitiy>
 
-
+    // GET Closest Active Event
+    @Query("SELECT * FROM eventTable WHERE isActive = 1 AND date(beginTime) >= :currentTime ORDER BY date(beginTime) ASC LIMIT 1")
+    suspend fun getClosestActiveEvent(currentTime: Long): EventEntitiy?
 }

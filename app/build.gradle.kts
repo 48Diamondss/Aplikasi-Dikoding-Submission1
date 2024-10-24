@@ -85,4 +85,9 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.jetbrains.kotlinx.coroutines.android)
+
+    //workmanager
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.android.async.http)
+
 }

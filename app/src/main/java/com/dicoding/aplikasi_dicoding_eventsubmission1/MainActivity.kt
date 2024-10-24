@@ -102,6 +102,10 @@ class MainActivity : AppCompatActivity() {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
         }
+
+        mainViewModel.getReminderState().observe(this) { isActive ->
+            mainViewModel.setReminder(isActive)
+        }
     }
 
     // Unregister NetworkCallback saat activity dihancurkan

@@ -227,6 +227,43 @@ class EventRepository private constructor(
         }
     }
 
+    suspend fun getNotifEvent(): EventEntitiy? {
+        val closestEvent = eventDao.getClosestActiveEvent(System.currentTimeMillis())
+        return closestEvent
+    }
+
+    suspend fun fetchAndUpdateEvents(): List<EventEntitiy> {
+        val apiResponse = apiService.getListEvents(active = -1) // Ambil data dari API
+        return if (!apiResponse.error) {
+            val events = apiResponse.listEvents.map { event ->
+                // Konversi ListEventsItem ke EventEntity
+                EventEntitiy(
+                    id = event.id,
+                    name = event.name,
+                    summary = event.summary,
+                    mediaCover = event.mediaCover,
+                    registrants = event.registrants,
+                    imageLogo = event.imageLogo,
+                    link = event.link,
+                    description = event.description,
+                    ownerName = event.ownerName,
+                    cityName = event.cityName,
+                    quota = event.quota,
+                    beginTime = event.beginTime,
+                    endTime = event.endTime,
+                    category = event.category,
+                    isActive = true
+                )
+            }
+            // Simpan data ke database
+            eventDao.insertEvents(events)
+
+            events // Kembalikan daftar event yang disimpan
+        } else {
+            emptyList() // Kembalikan daftar kosong jika ada kesalahan
+        }
+    }
+
     // Singleton instance
     companion object {
         @Volatile
@@ -236,7 +273,6 @@ class EventRepository private constructor(
                 instance ?: EventRepository(apiService, eventDao)
             }.also { instance = it }
     }
-
 
 }
 

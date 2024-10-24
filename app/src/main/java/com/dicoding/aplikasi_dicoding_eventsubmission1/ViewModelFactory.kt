@@ -9,13 +9,14 @@ import com.dicoding.aplikasi_dicoding_eventsubmission1.ui.setting.SettingPrefere
 
 class ViewModelFactory private constructor(
     private val eventRepository: EventRepository,
-    private val settingPreferences: SettingPreferences
+    private val settingPreferences: SettingPreferences,
+    private val workManager: androidx.work.WorkManager
 ) :
     ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(EventViewModel::class.java)) {
-            return EventViewModel(eventRepository, settingPreferences) as T
+            return EventViewModel(eventRepository, settingPreferences, workManager) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }
@@ -26,7 +27,12 @@ class ViewModelFactory private constructor(
         fun getInstance(context: Context): ViewModelFactory =
             instance ?: synchronized(this) {
                 val preferences = Injection.provideSettingPreferences(context)
-                instance ?: ViewModelFactory(Injection.provideRepository(context), preferences)
+                val workManagerr = androidx.work.WorkManager.getInstance(context)
+                instance ?: ViewModelFactory(
+                    Injection.provideRepository(context),
+                    preferences,
+                    workManagerr
+                )
             }.also { instance = it }
     }
 }
