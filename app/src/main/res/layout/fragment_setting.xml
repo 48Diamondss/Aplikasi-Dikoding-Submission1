@@ -75,7 +75,9 @@
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/linearLayout1"
             app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="DuplicateSpeakableTextCheck" />
+            tools:ignore="DuplicateSpeakableTextCheck"
+            app:thumbTint="@color/switch_thumb_color"
+            app:trackTint="@color/switch_track_color"/>
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/ReminderSwitc"
@@ -86,7 +88,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/linearLayout"
-            app:layout_constraintTop_toBottomOf="@+id/darkModeSwitch" />
+            app:layout_constraintTop_toBottomOf="@+id/darkModeSwitch"
+            app:thumbTint="@color/switch_thumb_color"
+            app:trackTint="@color/switch_track_color"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
